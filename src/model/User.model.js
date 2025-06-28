@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+const { v4: uuidv4 } = require("uuid");
 
 const MessageSchema = new mongoose.Schema({
   content: {
@@ -13,6 +14,12 @@ const MessageSchema = new mongoose.Schema({
 });
 
 const UserSchema = new mongoose.Schema({
+  uuid: {
+    type: String,
+    default: uuidv4,
+    unique: true,
+    index: true,
+  },
   userName: {
     type: String,
     required: [true, "Username is Required"],
