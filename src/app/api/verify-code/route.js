@@ -6,7 +6,7 @@ import { verifySchema } from "@/schemas/verifySchema";
 
 const VerifyUserSchema = z.object({
   userName: userNameValidation,
-  code: verifySchema,
+  code: verifySchema.shape.code,
 });
 
 export async function POST(request) {
