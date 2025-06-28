@@ -77,7 +77,6 @@ export async function GET(request) {
         status: 404,
       });
     }
-
     return Response.json(
       {
         success: true,

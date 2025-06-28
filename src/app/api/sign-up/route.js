@@ -3,6 +3,7 @@ import User from "@/model/User.model";
 import bcrypt from "bcryptjs";
 
 import { sendVerificationEmail } from "@/helpers/sendVerificationEmail";
+import { createApiResponse } from "@/lib/apiResponse";
 
 export async function POST(request) {
   await dbConnect();
@@ -14,13 +15,7 @@ export async function POST(request) {
     });
 
     if (existingUserVerifiedByUserName) {
-      return Response.json(
-        {
-          success: false,
-          message: "Username is already taken",
-        },
-        { status: 400 }
-      );
+      return createApiResponse(false, "Username is already taken", 400);
     }
 
     const existingUserByEmail = await User.findOne({
@@ -30,12 +25,10 @@ export async function POST(request) {
     const verifyCode = Math.floor(100000 + Math.random() * 900000).toString();
     if (existingUserByEmail) {
       if (existingUserByEmail.isVerified) {
-        return Response.json(
-          {
-            success: false,
-            message: "User already exists with this email",
-          },
-          { status: 400 }
+        return createApiResponse(
+          false,
+          "User already exists with this email",
+          400
         );
       } else {
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -68,29 +61,10 @@ export async function POST(request) {
     );
 
     if (!emailResponse.success) {
-      return Response.json(
-        {
-          success: false,
-          message: emailResponse.message,
-        },
-        { status: 500 }
-      );
+      return createApiResponse(false, emailResponse.message, 500);
     }
-    return Response.json(
-      {
-        success: true,
-        message: "User registered Successfully",
-      },
-      { status: 200 }
-    );
+    return createApiResponse(true, "User registered Successfully", 200);
   } catch (error) {
-    console.error("Error Registering User", error);
-    return Response.json(
-      {
-        success: false,
-        message: "Error registering user",
-      },
-      { status: 500 }
-    );
+    return createApiResponse(false, "Error Registering User", 500, error);
   }
 }
